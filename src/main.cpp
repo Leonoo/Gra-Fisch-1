@@ -8,7 +8,10 @@
 #include <list>
 #include <random>
 #include <memory>
+
 #include "Character.h"
+#include "Piranha.h"
+#include "BlasenAttacke.h"
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -42,7 +45,11 @@ int main()
     sf::View View(grafish.getPosition(), ViewSize);
 
 	std::uniform_int_distribution<int> randomint(50,100);
+	std::uniform_int_distribution<int> randomíntPira(100,400);
+	std::uniform_int_distribution<int> randomIntOneTofour(1,4);
 	std::default_random_engine randomEngine;
+	std::default_random_engine randomEnginePira;
+	std::default_random_engine randomEngineOneTofour;
 
 	std::list<std::shared_ptr<sf::RectangleShape>> RectShapeList;
 	std::list<std::shared_ptr<sf::RectangleShape>> RectShapeUntenList;
@@ -68,8 +75,15 @@ int main()
 		tempRectShape->setSize(sf::Vector2f(50, random));
 	}
 
+	std::list<std::shared_ptr<Piranha>> PiranhaList;
+	std::list<std::shared_ptr<Piranha>> dropPiranhaList;
+
+	std::list<std::shared_ptr<BlasenAttacke>> blasenAttackeList;
+	std::list<std::shared_ptr<BlasenAttacke>> dropBlasenAttackeList;
+
 	sf::Clock clock;
 	sf::Clock clock2;
+	sf::Clock clock3;
 	// Start game loop
 	sf::Event Event;
     while (App.isOpen())
@@ -88,7 +102,51 @@ int main()
 
 		if (clock2.getElapsedTime().asSeconds() > 5.0)
 		{
+			sf::Time piraTime = clock3.getElapsedTime();
+
+			for (auto item: blasenAttackeList)
+			{
+				item->update(elapsed);
+			}
+
 			grafish.update(elapsed);
+			std::shared_ptr<BlasenAttacke> tempAttack = grafish.getAttack();
+			if (tempAttack != nullptr)
+			{
+				blasenAttackeList.push_back(tempAttack);
+			}
+
+			for (auto item: PiranhaList)
+			{
+				item->update(elapsed);
+			}
+
+			if (piraTime.asSeconds() > 3.f)
+			{
+				for (int i = 0; i < randomIntOneTofour(randomEngineOneTofour); i++)
+				{
+					float xposi = View.getCenter().x - 350 <= 0 ? 0 : View.getCenter().x - 350;
+
+					sf::Vector2f startPosition(xposi, randomíntPira(randomEngineOneTofour));
+					std::shared_ptr<Piranha> tempPira(new Piranha());
+					tempPira->load(startPosition);
+					PiranhaList.push_back(tempPira);
+				}
+				clock3.restart();
+			}
+
+			for (auto item: PiranhaList)
+			{
+				if (item->collisionBlasenAttacke(blasenAttackeList))
+				{
+					dropPiranhaList.push_back(item);
+				}
+			}
+			for (auto item: dropPiranhaList)
+			{
+				PiranhaList.remove(item);
+			}
+			dropPiranhaList.clear();
 
 			View.setCenter(grafish.getPosition().x, 250.f);
 
@@ -127,7 +185,41 @@ int main()
 				}
 			}
 		
-			grafish.draw(App);
+			for (auto item: PiranhaList)
+			{
+				if (item->getPosition().x >= View.getCenter().x + 350)
+				{
+					dropPiranhaList.push_back(item);
+				}
+				else
+				{
+					App.draw(*item);
+				}
+			}
+			for (auto item: dropPiranhaList)
+			{
+				PiranhaList.remove(item);
+			}
+			dropPiranhaList.clear();
+
+			for (auto item: blasenAttackeList)
+			{
+				if (item->getPosition().x <= View.getCenter().x - 350)
+				{
+					dropBlasenAttackeList.push_back(item);
+				}
+				else
+				{
+					App.draw(*item);
+				}
+			}
+			for (auto item: dropBlasenAttackeList)
+			{
+				blasenAttackeList.remove(item);
+			}
+			dropBlasenAttackeList.clear();
+
+			App.draw(grafish);
 			App.setView(App.getDefaultView());
 		}
 		else

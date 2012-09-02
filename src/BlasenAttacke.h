@@ -1,35 +1,28 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <list>
 
-
-#include "Piranha.h"
-#include "BlasenAttacke.h"
-
-
-class Character : public sf::Drawable
+class BlasenAttacke : public sf::Drawable
 {
 public:
-	Character(void);
-	virtual ~Character(void);
+	BlasenAttacke(void);
+	virtual ~BlasenAttacke(void);
 
-	void load();
+	void load(const sf::Vector2f &startPosition);
 	void update(sf::Time &elapsed);
 	virtual void draw (sf::RenderTarget &target, sf::RenderStates states) const;
-	bool collisionPiranha(std::list<std::shared_ptr<Piranha>> &piranhaList);
 
 	const sf::Vector2f &getPosition() const;
 	const std::shared_ptr<sf::Sprite > getSprite() const;
-
-	std::shared_ptr<BlasenAttacke> getAttack();
+	const sf::Image &getImage() const;
 
 private:
 	void switchTexture();
 
-	sf::Vector2f _OldPosition;
 	sf::Time _Past;
-	std::shared_ptr<sf::Texture> _TexturePtr;
 	std::shared_ptr<sf::Sprite > _SpritePtr;
+
+	static std::shared_ptr<sf::Texture> _TexturePtr;
+	static sf::Image _Image;
 };
 

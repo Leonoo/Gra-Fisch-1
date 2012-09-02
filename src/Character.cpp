@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-Character::Character(void) : _TexturePtr(new sf::Texture()), _SpritePtr(new sf::Sprite())
+Character::Character(void) : sf::Drawable(), _TexturePtr(new sf::Texture()), _SpritePtr(new sf::Sprite())
 {
 
 }
@@ -10,7 +10,7 @@ Character::Character(void) : _TexturePtr(new sf::Texture()), _SpritePtr(new sf::
 
 Character::~Character(void)
 {
-
+	sf::Drawable::~Drawable();
 }
 
 void Character::update(sf::Time &elapsed)
@@ -43,20 +43,51 @@ void Character::load()
 	 {
 		 _SpritePtr->setTexture(*_TexturePtr);
 		 _SpritePtr->setPosition(0,250);
-		 _SpritePtr->setScale(0.25, 0.25);
+		 _SpritePtr->setScale(0.20f, 0.20f);
 		 this->switchTexture();
 	 }
 }
 
-void Character::draw(sf::RenderWindow &randerWindow)
+void Character::draw (sf::RenderTarget &target, sf::RenderStates states) const
 {
-	randerWindow.draw(*_SpritePtr);
+	target.draw(*_SpritePtr);
+}
+
+bool Character::collisionPiranha(std::list<std::shared_ptr<Piranha>> &piranhaList)
+{
+	return false;
 }
 
  const sf::Vector2f &Character::getPosition() const
 {
 	return _SpritePtr->getPosition();
 }
+
+const std::shared_ptr<sf::Sprite > Character::getSprite() const
+ {
+	 return _SpritePtr;
+ }
+
+ std::shared_ptr<BlasenAttacke> Character::getAttack()
+ {
+	 static sf::Clock clock;
+	 sf::Time time = clock.getElapsedTime();
+
+	std::shared_ptr<BlasenAttacke> blasenAttack(nullptr);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && time.asSeconds() >= 0.5f)
+	{
+		blasenAttack = std::shared_ptr<BlasenAttacke>(new BlasenAttacke);
+
+		sf::Vector2f posi = this->getPosition();
+		posi.y += 20;
+
+		blasenAttack->load(posi);
+
+		clock.restart();
+	}
+
+	return blasenAttack;
+ }
 
 void Character::switchTexture()
 {
