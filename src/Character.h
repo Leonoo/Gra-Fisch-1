@@ -6,7 +6,7 @@
 
 #include "Piranha.h"
 #include "BlasenAttacke.h"
-
+#include "AnimationManager.h"
 
 class Character : public sf::Drawable
 {
@@ -31,5 +31,7 @@ private:
 	sf::Time _Past;
 	std::shared_ptr<sf::Texture> _TexturePtr;
 	std::shared_ptr<sf::Sprite > _SpritePtr;
+
+	std::unique_ptr<AnimationManager> _AnimationManagerPtr;
 };
 

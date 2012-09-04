@@ -32,12 +32,13 @@ void Piranha::load(const sf::Vector2f &startPosition)
 	if (Piranha::_TexturePtr == nullptr)
 	{
 		Piranha::_TexturePtr = std::shared_ptr<sf::Texture>(new sf::Texture);
-		if (_TexturePtr->loadFromFile("Ressourcen/piranha.jpg"))
+		if (_TexturePtr->loadFromFile("Bilder/piranha.jpg"))
 		{
 			Piranha::_Image = _TexturePtr->copyToImage();
 			Piranha::_Image.flipHorizontally();
 			Piranha::_Image.createMaskFromColor(sf::Color::White);
 			_TexturePtr->loadFromImage(Piranha::_Image);
+			_TexturePtr->setSmooth(true);
 		}
 	}
 

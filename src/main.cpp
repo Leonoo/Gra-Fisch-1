@@ -21,12 +21,15 @@
 ////////////////////////////////////////////////////////////
 int main()
 {
+	sf::ContextSettings cs;
+	cs.antialiasingLevel = 16;
+
     // Create the main window
-    sf::RenderWindow App(sf::VideoMode(700, 500), "SFML Views");
+    sf::RenderWindow App(sf::VideoMode(700, 500), "SFML Views", 7U, cs);
 	App.setVerticalSyncEnabled(true);
 
 	 sf::Font font;
-	 if (!font.loadFromFile("Ressourcen/DK_Crayon_Crumble.ttf"))
+	 if (!font.loadFromFile("Fonts/DK_Crayon_Crumble.ttf"))
 	 {
 	 }
 

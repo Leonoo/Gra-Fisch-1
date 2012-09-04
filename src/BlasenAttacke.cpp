@@ -25,11 +25,12 @@ void BlasenAttacke::load(const sf::Vector2f &startPosition)
 	if (BlasenAttacke::_TexturePtr == nullptr)
 	{
 		BlasenAttacke::_TexturePtr = std::shared_ptr<sf::Texture>(new sf::Texture);
-		if (_TexturePtr->loadFromFile("Ressourcen/wasserblasen.png"))
+		if (_TexturePtr->loadFromFile("Bilder/wasserblasen.png"))
 		{
 			BlasenAttacke::_Image = _TexturePtr->copyToImage();
 			BlasenAttacke::_Image.createMaskFromColor(sf::Color::White);
 			_TexturePtr->loadFromImage(BlasenAttacke::_Image);
+			_TexturePtr->setSmooth(true);
 		}
 	}
 

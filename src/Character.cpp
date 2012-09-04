@@ -2,7 +2,8 @@
 #include <iostream>
 #include <sstream>
 
-Character::Character(void) : sf::Drawable(), _TexturePtr(new sf::Texture()), _SpritePtr(new sf::Sprite())
+Character::Character(void) : 
+	sf::Drawable(), _TexturePtr(new sf::Texture()), _SpritePtr(new sf::Sprite())
 {
 
 }
@@ -30,21 +31,26 @@ void Character::update(sf::Time &elapsed)
 
 	_SpritePtr->move(Offset / 2.f, 0);
 
-	if (_Past.asSeconds() >= 0.100f)
-	{
-		_Past = _Past.Zero;
-		switchTexture();
-	}
+	_AnimationManagerPtr->update(elapsed);
 }
 
 void Character::load()
 {
-	 if (_TexturePtr->loadFromFile("Ressourcen/Gra-Fisch_schwimm.png"))
+	 if (_TexturePtr->loadFromFile("Bilder/Gra-Fisch_schwimm.png"))
 	 {
+		 _TexturePtr->setSmooth(true);
 		 _SpritePtr->setTexture(*_TexturePtr);
 		 _SpritePtr->setPosition(0,250);
 		 _SpritePtr->setScale(0.20f, 0.20f);
-		 this->switchTexture();
+
+		 _AnimationManagerPtr = std::unique_ptr<AnimationManager>(new AnimationManager(_SpritePtr, sf::IntRect(0, 0, 595, 421)));
+
+ 		 std::shared_ptr<Animation> tempAnimation(new Animation(_SpritePtr, 500));
+		 tempAnimation->addFrame(sf::IntRect(0, 0, 595, 421));
+		 tempAnimation->addFrame(sf::IntRect(0, 421, 595, 421));
+
+		 _AnimationManagerPtr->addAnimation("Schwimmen", tempAnimation);
+		 _AnimationManagerPtr->startAnimation("Schwimmen");
 	 }
 }
 
@@ -88,19 +94,3 @@ const std::shared_ptr<sf::Sprite > Character::getSprite() const
 
 	return blasenAttack;
  }
-
-void Character::switchTexture()
-{
-	static bool hasSwitch;
-
-	if (hasSwitch)
-	{
-		_SpritePtr->setTextureRect(sf::IntRect(0, 0, 595, 421));
-		hasSwitch = false;
-	}
-	else
-	{
-		_SpritePtr->setTextureRect(sf::IntRect(0, 421, 595, 421));
-		hasSwitch = true;
-	}
-}

@@ -23,8 +23,8 @@ bool PixelPerfectTest(const sf::Sprite& Object1, const sf::Image& Image1, const 
         sf::Vector2f o2v;
 
         //Loop through our pixels
-		for (int i = Intersection.left; i < Intersection.width + Intersection.left; i++) {
-			for (int j = Intersection.top; j < Intersection.height + Intersection.top; j++) {
+		for (int i = static_cast<int>(Intersection.left); i < static_cast<int>(Intersection.width + Intersection.left); i++) {
+			for (int j = static_cast<int>(Intersection.top); j < static_cast<int>(Intersection.height + Intersection.top); j++) {
 
 				o1v.x = static_cast<float>(i);
 				o1v.y = static_cast<float>(j);
